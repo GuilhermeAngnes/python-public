@@ -1,24 +1,24 @@
-from requests_html import HTMLSession
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
 
+# pagina que vamos trabalhar
+url = 'https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2022'
 
-session = HTMLSession()
+headers = {
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"}
 
-requisition = session.get(
-    "https://www.gazetaesportiva.com/campeonatos/brasileiro-serie-a/"
-)
+site = requests.get(url, headers=headers)
+soup = BeautifulSoup(site.content, 'html.parser')
 
-nome_times = requisition.html.find(".table__team")
+nomes_times = soup.find_all('span', class_='hidden-xs')
+pontos_times = soup.find_all('th', scope='row')
 
-pontos = requisition.html.find(".table__stats")
+# print(nomes_times[0].text)
+# print(pontos_times[0].text)
 
-titulo_time = requisition.html.find(".table__team")
-titulo_pontos = requisition.html.find(".table__stats")
-
-print(titulo_time[0].text + " " + titulo_pontos[0].text)
 
 for item in range(20):
-    dados = (nome_times[item + 1].text + " " + pontos[item + 9].text)
+    dados = (nomes_times[item].text + " " + pontos_times[item].text)
     print(dados)
     # dados.to_excel('dados.xls')
